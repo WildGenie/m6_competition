@@ -20,7 +20,7 @@ def get_m6_tickers_data(
     to_date.tz_localize(tz="Europe/Moscow").tz_convert(tz="America/New_York")
     to_date.replace(hour=0, minute=0, second=0, microsecond=0)
 
-    tickers_data = dict()
+    tickers_data = {}
     for ticker in tqdm(tickers[:]):
         #     data = get_ticker_historical_data(ticker=ticker,
         #                                       from_date=from_date,
@@ -61,10 +61,9 @@ def get_ticker_historical_data(
     to_date = int(time.mktime(to_date.timetuple()))
     interval = "1d"  # 1wk, 1mo
     query_string = f"https://query1.finance.yahoo.com/v7/finance/download/{ticker}?period1={from_date}&period2={to_date}&interval={interval}&events=history&includeAdjustedClose=true"
-    df = pd.read_csv(
+    return pd.read_csv(
         query_string, index_col=0, parse_dates=[0], infer_datetime_format=True
     )
-    return df
 
 
 def get_dre_ticker_data():

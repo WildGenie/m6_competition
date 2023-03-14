@@ -108,7 +108,7 @@ def backtest_M6_ir(
 
 
 def scores_to_quintiles(x):
-    ys = list()
+    ys = []
     q = np.quantile(x, [0.2, 0.4, 0.6, 0.8])
     for xi in x:
         y = np.searchsorted(q, xi)
@@ -124,7 +124,7 @@ def mvn_quintile_probabilities(sigma, n_samples, mu=None):
         mu, sigma, size=n_samples, check_valid="warn", tol=1e-8
     )
     y = scores_to_quintiles(x)
-    p = list()
+    p = []
     for i in range(5):
         pi = np.mean(y == i, axis=0)
         p.append(pi)
@@ -211,17 +211,9 @@ def logging_callback(study: opt.Study, frozen_trial: opt.Trial):
     if previous_best_value != study.best_value:
         study.set_user_attr("previous_best_value", study.best_value)
         print(
-            "Trial {} finished with best value: {} and parameters: {}. ".format(
-                frozen_trial.number,
-                frozen_trial.value,
-                frozen_trial.params,
-            )
+            f"Trial {frozen_trial.number} finished with best value: {frozen_trial.value} and parameters: {frozen_trial.params}. "
         )
     else:
         print(
-            "Trial {} finished with value: {} and parameters: {}. ".format(
-                frozen_trial.number,
-                frozen_trial.value,
-                frozen_trial.params,
-            )
+            f"Trial {frozen_trial.number} finished with value: {frozen_trial.value} and parameters: {frozen_trial.params}. "
         )

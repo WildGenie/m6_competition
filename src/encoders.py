@@ -115,8 +115,7 @@ class NaNLabelEncoder(BaseEstimator, TransformerMixin):
             elif isinstance(y, pd.Series):
                 y = torch.from_numpy(y.values)
 
-        encoded = F.one_hot(y)
-        return encoded
+        return F.one_hot(y)
 
     #         if self.add_nan:
     #             if self.warn:

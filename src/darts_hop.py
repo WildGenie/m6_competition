@@ -88,9 +88,7 @@ class Objective(object):
             start_split=0.9,
         )
 
-        loss = calculate_loss(self.scalers, self.splited_series, backtests)
-
-        return loss
+        return calculate_loss(self.scalers, self.splited_series, backtests)
 
 
 import optuna
@@ -117,11 +115,7 @@ def logging_callback(study, frozen_trial):
     if previous_best_value != study.best_value:
         study.set_user_attr("previous_best_value", study.best_value)
         print(
-            "Trial {} finished with best value: {} and parameters: {}. ".format(
-                frozen_trial.number,
-                frozen_trial.value,
-                frozen_trial.params,
-            )
+            f"Trial {frozen_trial.number} finished with best value: {frozen_trial.value} and parameters: {frozen_trial.params}. "
         )
 
 
@@ -194,8 +188,7 @@ class Objective(object):
             start_split=0.9,
         )
 
-        loss = calculate_loss(self.scalers, self.splited_series, backtests)
-        return loss
+        return calculate_loss(self.scalers, self.splited_series, backtests)
 
 
 # study = optuna.create_study(

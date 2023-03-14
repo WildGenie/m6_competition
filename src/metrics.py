@@ -68,8 +68,7 @@ class RPS(MultiHorizonMetric):
     def loss(self, y_pred, target):
         y_pred = F.softmax(y_pred, dim=-1)
         target = F.one_hot(target)
-        loss = torch_rps(y_pred, target)
-        return loss
+        return torch_rps(y_pred, target)
 
     def to_quantiles(self, out: Dict[str, torch.Tensor], quantiles=None):
         return out
@@ -200,14 +199,13 @@ def IR_calculation(hist_data, submission):
         .iloc[1:]
     )
     pivoted.columns = pivoted.columns.get_level_values(1)
-    RET = np.log(
+    return np.log(
         1
         + (
             pivoted.reindex(columns=asset_id)
             * weights.set_index("ID").reindex(asset_id)["Decision"].to_numpy()
         ).sum(axis=1)
     ).reset_index(drop=True)
-    return RET
 
 
 def ffill_missing_prices(hist_data):
@@ -244,7 +242,7 @@ def run_evaluation(periods, asset_data):
         except FileNotFoundError:
             # just use default submission
             submission_data = pd.read_csv(
-                f"../input/m6naivesubmissionfiles/submission_1.csv"
+                "../input/m6naivesubmissionfiles/submission_1.csv"
             )
         submission_data["ID"] = submission_data["ID"].replace("FB", "META")
         rpss.append(
@@ -266,7 +264,7 @@ def slow_rps_calculation(ranking, submission):
     Series_per_position
 
     total_ranks = Series_per_position.Position.values[-1]
-    for i in range(0, Series_per_position.shape[0]):
+    for i in range(Series_per_position.shape[0]):
 
         start_p = Series_per_position.Position[i]
         end_p = Series_per_position.Position[i] + Series_per_position.Series[i]
@@ -439,5 +437,4 @@ def slow_rps_calculation(ranking, submission):
             "Rank5",
         ]
     ]
-    ranking = ranking.sort_values(["Position"])
-    return ranking
+    return ranking.sort_values(["Position"])

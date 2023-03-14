@@ -45,7 +45,7 @@ def backtest_global_model(
     start_split,
     verbose=False,
 ) -> List:
-    backtests = [
+    return [
         model.historical_forecasts(
             series=serie,
             past_covariates=past_cov,
@@ -63,7 +63,6 @@ def backtest_global_model(
             list(zip(scaled_series, past_covariates, future_covariates))
         )
     ]
-    return backtests
 
 
 def fit_local_models(models, scaled_series, past_covariates, future_covariates) -> List:
@@ -133,8 +132,8 @@ def fit_global_model(model, scaled_series, past_covariates, future_covariates) -
 def calculate_loss(
     scalers, splited_series, backtests, log=False, scaling=False
 ) -> float:
-    rmse_losses = list()
-    mae_losses = list()
+    rmse_losses = []
+    mae_losses = []
     for scaler, serie_list, backtest in tqdm(
         list(zip(scalers, splited_series, backtests))
     ):
