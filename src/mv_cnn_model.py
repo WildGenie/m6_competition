@@ -27,13 +27,13 @@ def get_cnn_layer_output_dim(
     pool_kernel_size: int = 2,
     pool_stride_size: int = 2,
 ) -> int:
+    cnn_output = get_cnn_output_dim(
+        input_size, conv_kernel_size, padding_size, conv_stride_size
+    )
+    pool_output = get_pool_output_dim(
+        cnn_output, pool_kernel_size, pool_stride_size
+    )
     if n_layers > 1:
-        cnn_output = get_cnn_output_dim(
-            input_size, conv_kernel_size, padding_size, conv_stride_size
-        )
-        pool_output = get_pool_output_dim(
-            cnn_output, pool_kernel_size, pool_stride_size
-        )
         n_layers -= 1
         return int(
             get_cnn_layer_output_dim(
@@ -47,12 +47,6 @@ def get_cnn_layer_output_dim(
             )
         )
     else:
-        cnn_output = get_cnn_output_dim(
-            input_size, conv_kernel_size, padding_size, conv_stride_size
-        )
-        pool_output = get_pool_output_dim(
-            cnn_output, pool_kernel_size, pool_stride_size
-        )
         return int(pool_output)
 
 
@@ -78,10 +72,10 @@ class MultivariateMLP(nn.Module):
 
     def forward(self, x):
         out = self.encoder(x)
-        outputs = [
-            F.softmax(classifier(out), dim=-1) for classifier in self.linear_classifiers
+        return [
+            F.softmax(classifier(out), dim=-1)
+            for classifier in self.linear_classifiers
         ]
-        return outputs
 
 
 class Flatten(nn.Module):
@@ -159,7 +153,7 @@ class MultivariateCNN(nn.Module):
 
     def forward(self, x):
         out = self.encoder(x)
-        outputs = [
-            F.softmax(classifier(out), dim=-1) for classifier in self.linear_classifiers
+        return [
+            F.softmax(classifier(out), dim=-1)
+            for classifier in self.linear_classifiers
         ]
-        return outputs

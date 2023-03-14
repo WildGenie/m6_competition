@@ -14,30 +14,27 @@ class RPSLoss(torch.nn.Module):
         # y_pred = F.softmax(input, dim=-1)
         #         outcome = F.one_hot(target.to(torch.int64), num_classes=5)
         diff = torch.cumsum(input, dim=-1) - torch.cumsum(target, dim=-1)
-        loss = torch.mean(((diff) ** 2))  # , dim=0)
-        return loss
+        return torch.mean(((diff) ** 2))
 
 
 def batchify_data(x_data, y_data, batch_size: int = 25):
     """Takes a set of data points and labels and groups them into batches."""
     # Only take batch_size chunks (i.e. drop the remainder)
-    N = int(len(x_data) / batch_size) * batch_size
-    batches = []
-    for i in range(0, N, batch_size):
-        batches.append(
-            {
-                "x": x_data[i : i + batch_size, :, :, :],
-                "y": y_data[i : i + batch_size, :, :, :],
-            }
-        )
-    return batches
+    N = len(x_data) // batch_size * batch_size
+    return [
+        {
+            "x": x_data[i : i + batch_size, :, :, :],
+            "y": y_data[i : i + batch_size, :, :, :],
+        }
+        for i in range(0, N, batch_size)
+    ]
 
 
 def train_model(train_data, dev_data, model, optimizer, n_epochs=30):
     """Train a model for N epochs given data and hyper-params."""
 
     for epoch in range(1, n_epochs + 1):
-        print("-------------\nEpoch {}:\n".format(epoch))
+        print(f"-------------\nEpoch {epoch}:\n")
 
         # Run **training***
         losses = run_epoch(train_data, model.train(), optimizer)
@@ -55,7 +52,7 @@ def train_model(train_data, dev_data, model, optimizer, n_epochs=30):
 def run_epoch(data, model, optimizer):
     """Train model for one pass of train data, and return loss, accuracy"""
     # Gather losses
-    losses = [[] for i in range(model.in_channels)]
+    losses = [[] for _ in range(model.in_channels)]
 
     # If model is in train mode, use optimizer.
     is_training = model.training
@@ -89,7 +86,4 @@ def run_epoch(data, model, optimizer):
             joint_loss.backward()
             optimizer.step()
 
-    # Calculate epoch level scores
-    #     print(np.mean(torch.stack(losses[0]).detach().numpy()))
-    avg_loss = [np.mean(torch.stack(loss).detach().numpy()) for loss in losses]
-    return avg_loss
+    return [np.mean(torch.stack(loss).detach().numpy()) for loss in losses]
